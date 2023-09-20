@@ -1,8 +1,16 @@
 import React, { useState, useContext, useEffect } from "react";
+import {
+	DndContext,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import CustomLoader from "./Skeleton/CustomLoader";
 import DataContext from "../context/DataContext";
-import { DragDropContext, Draggable } from "react-beautiful-dnd";
-import { StrictModeDroppable as Droppable } from "../Helpers/StrictModeDroppable";
+import SortableImage from "./SortableImage";
 
 const Card = () => {
 	const { images, loading } = useContext(DataContext);
@@ -22,17 +30,20 @@ const Card = () => {
 			image.tags.toLowerCase().includes(searchQuery.toLowerCase())
 		);
 
-	// Handle drag-and-drop end
-	const handleDragEnd = (result) => {
-		// Check if the destination is not null (i.e., a valid drop target)
-		if (!result.destination) return;
+	// Drag-and-drop functionality
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor)
+	);
 
-		// Update the image order based on the drag-and-drop result
-		const newImageOrder = [...imageOrder];
-		const [reorderedImage] = newImageOrder.splice(result.source.index, 1);
-		newImageOrder.splice(result.destination.index, 0, reorderedImage);
-
-		setImageOrder(newImageOrder);
+	const handleDragEnd = ({ active, over }) => {
+		if (active.id !== over.id) {
+			setImageOrder((items) => {
+				const oldIndex = items.indexOf(active.id);
+				const newIndex = items.indexOf(over.id);
+				return arrayMove(items, oldIndex, newIndex);
+			});
+		}
 	};
 
 	return (
@@ -49,50 +60,24 @@ const Card = () => {
 			{loading ? (
 				<CustomLoader numberOfCards={36} />
 			) : (
-				<div>
-					<DragDropContext onDragEnd={handleDragEnd}>
-						<Droppable droppableId="images">
-							{(provided, snapshot) => (
-								<section
-									{...provided.droppableProps}
-									ref={provided.innerRef}
-									className={`grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full ${
-										snapshot.isDraggingOver
-											? "border-4 border-dashed border-blue-400 rounded-md"
-											: ""
-									}`}
-								>
-									{filteredImages.map((image, index) => (
-										<Draggable
-											key={image.id}
-											draggableId={image.id.toString()}
-											index={index}
-										>
-											{(provided) => (
-												<div
-													{...provided.draggableProps}
-													{...provided.dragHandleProps}
-													ref={provided.innerRef}
-													className="relative overflow-hidden rounded-md shadow-md"
-												>
-													<img
-														src={image.url}
-														alt={image.alt}
-														className="w-full h-auto"
-													/>
-													<div className="absolute bottom-0 left-0 right-0 p-2 text-sm text-center text-white bg-black">
-														{image.tags}
-													</div>
-												</div>
-											)}
-										</Draggable>
-									))}
-									{provided.placeholder}
-								</section>
-							)}
-						</Droppable>
-					</DragDropContext>
-				</div>
+				<DndContext
+					sensors={sensors}
+					collisionDetection={closestCenter}
+					onDragEnd={handleDragEnd}
+				>
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+						{filteredImages.map((image, index) => (
+							<SortableImage
+								key={image.id}
+								id={image.id}
+								url={image.url}
+								alt={image.alt}
+								tags={image.tags}
+								index={index}
+							/>
+						))}
+					</div>
+				</DndContext>
 			)}
 		</div>
 	);
