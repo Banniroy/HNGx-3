@@ -9,7 +9,6 @@ const Card = () => {
 
 	const [searchQuery, setSearchQuery] = useState("");
 	const [imageOrder, setImageOrder] = useState([]);
-	const [isDraggingOver, setIsDraggingOver] = useState(false);
 
 	// Initialize imageOrder to match the order of images
 	useEffect(() => {
@@ -22,6 +21,19 @@ const Card = () => {
 		.filter((image) =>
 			image.tags.toLowerCase().includes(searchQuery.toLowerCase())
 		);
+
+	// Handle drag-and-drop end
+	const handleDragEnd = (result) => {
+		// Check if the destination is not null (i.e., a valid drop target)
+		if (!result.destination) return;
+
+		// Update the image order based on the drag-and-drop result
+		const newImageOrder = [...imageOrder];
+		const [reorderedImage] = newImageOrder.splice(result.source.index, 1);
+		newImageOrder.splice(result.destination.index, 0, reorderedImage);
+
+		setImageOrder(newImageOrder);
+	};
 
 	return (
 		<div className="max-w-screen-lg p-4 mx-auto">
@@ -38,15 +50,7 @@ const Card = () => {
 				<CustomLoader numberOfCards={36} />
 			) : (
 				<div>
-					<DragDropContext
-						onDragStart={() => {
-							setIsDraggingOver(true);
-						}}
-						onDragEnd={(result) => {
-							setIsDraggingOver(false);
-							// Rest of your code for handling the drag and drop
-						}}
-					>
+					<DragDropContext onDragEnd={handleDragEnd}>
 						<Droppable droppableId="images">
 							{(provided, snapshot) => (
 								<section
