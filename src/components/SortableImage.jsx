@@ -1,16 +1,15 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities"
 
 const SortableImage = ({ id, url, alt, tags, index }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
-  const style = {
-    transform: transform
-      ? `translate(${transform.x}px, ${transform.y}px)`
-      : "",
-    transition: transition || "transform 0.2s ease-in-out", // Tailwind-like transition
-  };
+   const style = {
+        transition,
+        transform: CSS.Transform.toString(transform)
+   }
 
   return (
     <div
