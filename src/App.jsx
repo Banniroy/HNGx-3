@@ -8,6 +8,7 @@ import Login from "./components/AuthLogin/Login";
 function App() {
 	const location = useLocation();
 
+	// webpage scroll reset
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, [location.pathname]);

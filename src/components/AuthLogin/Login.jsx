@@ -11,6 +11,10 @@ const Login = () => {
 	const errRef = useRef();
 	const userRef = useRef();
 
+	const navigate = useNavigate();
+	const location = useLocation();
+	const from = location.state?.from?.pathname || "/";
+
 	const [isLoading, setIsLoading] = useState(false);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -24,6 +28,7 @@ const Login = () => {
 		userRef.current.focus();
 	}, []);
 
+	// login function
 	const signIn = async (e) => {
 		e.preventDefault();
 		setIsLoading(true);
@@ -44,10 +49,6 @@ const Login = () => {
 			setErrMsg(error.message);
 		}
 	};
-
-	const navigate = useNavigate();
-	const location = useLocation();
-	const from = location.state?.from?.pathname || "/";
 
 	return (
 		<section className="flex justify-center w-full h-screen">

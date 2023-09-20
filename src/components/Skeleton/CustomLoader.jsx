@@ -1,7 +1,6 @@
 import React from "react";
 
 const CustomLoader = ({ numberOfCards }) => {
-	// Create an array with the specified number of cards
 	const loadingCards = Array.from({ length: numberOfCards }).map(
 		(_, index) => (
 			<div
