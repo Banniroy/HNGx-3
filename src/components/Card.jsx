@@ -9,7 +9,7 @@ const Card = () => {
 
 	const [searchQuery, setSearchQuery] = useState("");
 	const [imageOrder, setImageOrder] = useState([]);
-	const [isDraggingOver, setIsDraggingOver] = useState(false); // State for highlighting drop zone
+	const [isDraggingOver, setIsDraggingOver] = useState(false);
 
 	// Initialize imageOrder to match the order of images
 	useEffect(() => {
