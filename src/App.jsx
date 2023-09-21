@@ -17,9 +17,9 @@ function App() {
 		<main className="w-full h-full">
 			<Routes>
 				<Route path="/" element={<Layout />}>
-					<Route element={<RequireAuth />}>
-						<Route exact path="/" element={<Home />} />
-					</Route>
+					{/* <Route element={<RequireAuth />}> */}
+					<Route exact path="/" element={<Home />} />
+					{/* </Route> */}
 				</Route>
 				<Route exact path="/login" element={<Login />} />
 			</Routes>
