@@ -7,7 +7,11 @@ import {
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
+import {
+	arrayMove,
+	SortableContext,
+	rectSwappingStrategy,
+} from "@dnd-kit/sortable";
 import CustomLoader from "./Skeleton/CustomLoader";
 import DataContext from "../context/DataContext";
 import SortableImage from "./SortableImage";
@@ -65,18 +69,23 @@ const Card = () => {
 					collisionDetection={closestCenter}
 					onDragEnd={handleDragEnd}
 				>
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-						{filteredImages.map((image, index) => (
-							<SortableImage
-								key={image.id}
-								id={image.id}
-								url={image.url}
-								alt={image.alt}
-								tags={image.tags}
-								index={index}
-							/>
-						))}
-					</div>
+					<SortableContext
+						items={images}
+						strategy={rectSwappingStrategy}
+					>
+						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+							{filteredImages.map((image, index) => (
+								<SortableImage
+									key={image.id}
+									id={image.id}
+									url={image.url}
+									alt={image.alt}
+									tags={image.tags}
+									index={index}
+								/>
+							))}
+						</div>
+					</SortableContext>
 				</DndContext>
 			)}
 		</div>
